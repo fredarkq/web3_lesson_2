@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+
+from typing import Optional
+from hdwallet import BIP44HDWallet
+from hdwallet.cryptocurrencies import EthereumMainnet
+from hdwallet.derivations import BIP44Derivation
+from hdwallet.utils import generate_mnemonic
+from datetime import datetime
+import openpyxl
+
+# Read user IDs from the text file
+# with open("id_users.txt", "r") as f:
+#     id_users = [row.strip() for row in f]
+
+# Create a new workbook and select the active sheet
+book = openpyxl.Workbook()
+sheet = book.active
+
+# Define column headers
+sheet['A1'] = "Mnemonic"
+sheet['B1'] = "Address"
+sheet['C1'] = "Private key"
+sheet['D1'] = "User ID"
+
+# Number of wallets
+N = int(input("Enter number of wallets: "))
+
+for i in range(N):
+    # Generate english mnemonic words
+    MNEMONIC: str = generate_mnemonic(language="english", strength=128)
+    # Secret passphrase/password for mnemonic
+    PASSPHRASE: Optional[str] = None
+
+    # Initialize Ethereum mainnet BIP44HDWallet
+    bip44_hdwallet: BIP44HDWallet = BIP44HDWallet(cryptocurrency=EthereumMainnet)
+    # Get Ethereum BIP44HDWallet from mnemonic
+    bip44_hdwallet.from_mnemonic(
+        mnemonic=MNEMONIC, language="english", passphrase=PASSPHRASE
+    )
+    # Clean default BIP44 derivation indexes/paths
+    bip44_hdwallet.clean_derivation()
+    sheet.cell(row=i+2, column=1).value = bip44_hdwallet.mnemonic()
+
+    # Derivation from Ethereum BIP44 derivation path
+    bip44_derivation: BIP44Derivation = BIP44Derivation(
+        cryptocurrency=EthereumMainnet, account=0, change=False, address=0
+    )
+    # Drive Ethereum BIP44HDWallet
+    bip44_hdwallet.from_path(path=bip44_derivation)
+    # Add address and private key to the sheet
+    sheet.cell(row=i+2, column=2).value = bip44_hdwallet.address()
+    sheet.cell(row=i+2, column=3).value = bip44_hdwallet.private_key()
+    # Clean derivation indexes/paths
+    bip44_hdwallet.clean_derivation()
+
+#     # Add user ID from the list, ensure there are enough IDs
+#     if i < len(id_users):
+#         sheet.cell(row=i+2, column=4).value = id_users[i]
+#     else:
+#         sheet.cell(row=i+2, column=4).value = "No ID available"
+current_datetime = datetime.now().strftime("%Y.%m.%d_%H:%M")
+file_name = f"{current_datetime}.xlsx"
+# Save and close the workbook
+book.save(file_name)
+book.close()
