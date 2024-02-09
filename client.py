@@ -92,21 +92,15 @@ class Client:
         if not from_:
             from_ = self.address
 
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-
         tx_params = {
             'chainId': self.w3.eth.chain_id,
             'nonce': self.w3.eth.get_transaction_count(self.address),
             'from': Web3.to_checksum_address(from_),
             'to': Web3.to_checksum_address(to),
         }
-
-
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' ,tx_params)
-
         if data:
             tx_params['data'] = data
-
+        print(self.network)
         if self.network.eip1559_tx:
             w3 = Web3(provider=Web3.HTTPProvider(endpoint_uri=self.network.rpc))
             w3.middleware_onion.inject(geth_poa_middleware, layer=0)
@@ -128,14 +122,16 @@ class Client:
         if value:
             tx_params['value'] = value
 
+        print('!!!!!!!  BEFORE   !!!!!!!!' ,tx_params)
+
         try:
             tx_params['gas'] = int(self.w3.eth.estimate_gas(tx_params) * increase_gas)
         except Exception as err:
             print(f'{self.address} | Transaction failed | {err}')
             return None
 
+        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' ,tx_params)
 
-        print(tx_params)
 
         sign = self.w3.eth.account.sign_transaction(tx_params, self.private_key)
         return self.w3.eth.send_raw_transaction(sign.rawTransaction)
@@ -214,7 +210,7 @@ class Client:
             max_priority_fee_per_gas: Optional[int] = None,
             max_fee_per_gas: Optional[int] = None
     ):
-        
+
         # taiko_abi = read_json(TOKEN_ABI)
 #         if not from_:
 #             from_ = self.address
@@ -253,7 +249,7 @@ class Client:
                 # max_priority_fee_per_gas = self.w3.eth.max_priority_fee
                 max_priority_fee_per_gas = Client.get_max_priority_fee_per_gas(w3=w3, block=last_block)
             print('2')
-            
+
             if not max_fee_per_gas:
                 # base_fee = int(last_block['baseFeePerGas'] * 1.125)
                 base_fee = int(last_block['baseFeePerGas'] * increase_gas)

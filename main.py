@@ -22,15 +22,18 @@ taiko = Taiko(client=clientTaiko)
 # amount = TokenAmount(amount=0.001)
 # tx = woofi.swap_eth_to_usdc(amount=amount)
 # print(res)
+holesky.mint()
 approve = holesky.bridge()
-# holesky.mint()
-send = holesky.bridge_horse()
+# send = holesky.bridge_horse()
+
+sendEth = holesky.bridge_eth()
+
 # print( "holesky aprove =>", aprove)
 
 # send = taiko.bridge_horse()
 # res = taiko.client.verif_tx(tx_hash=send)
 
 
-print( "holesky aprove =>", send)
+print( "holesky aprove =>", sendEth)
 
 # print(res)
