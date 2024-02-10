@@ -8,6 +8,8 @@ from tasks.taiko import Taiko
 from models import TokenAmount
 import openpyxl
 from openpyxl import load_workbook
+import time
+
 
 
 
@@ -49,15 +51,19 @@ def run_accs(accs_data: list):
 
         print('START MINT =>',acc['privatekey'])
         holesky.mint()
+        time.sleep(10)        
 
         print('START APPROVING =>',acc['privatekey'])
         approve = holesky.bridge()
+        time.sleep(10)        
 
         print('START BRIDGE HORSE =>',acc['privatekey'])
         send = holesky.bridge_horse()
+        time.sleep(10)        
 
         print('START BRIDGE ETH =>',acc['privatekey'])
         sendEth = holesky.bridge_eth()
+        time.sleep(10)        
 
         print('FINISH ACCOUNT =>',acc['privatekey'])
 
