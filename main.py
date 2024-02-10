@@ -6,6 +6,7 @@ from models import Arbitrum, Avalanche, Optimism, Polygon, HoleskyNetwork, Taiko
 from tasks.holesky import Holesky
 from tasks.taiko import Taiko
 from models import TokenAmount
+import openpyxl
 
 clientHolesky = Client(private_key=private_key, network=HoleskyNetwork)
 clientHolesky.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
@@ -22,10 +23,11 @@ taiko = Taiko(client=clientTaiko)
 # amount = TokenAmount(amount=0.001)
 # tx = woofi.swap_eth_to_usdc(amount=amount)
 # print(res)
+
+
 holesky.mint()
 approve = holesky.bridge()
-# send = holesky.bridge_horse()
-
+send = holesky.bridge_horse()
 sendEth = holesky.bridge_eth()
 
 # print( "holesky aprove =>", aprove)
@@ -34,6 +36,28 @@ sendEth = holesky.bridge_eth()
 # res = taiko.client.verif_tx(tx_hash=send)
 
 
-print( "holesky aprove =>", sendEth)
+# sendEth = taiko.pool()
+
+# print( "holesky aprove =>", sendEth)
 
 # print(res)
+
+
+# async def read_excel(file_path):
+#     workbook = openpyxl.load_workbook(file_path)
+#     sheet = workbook.active
+#     private_keys = []
+#     proxies = []
+#     for row in range(2, sheet.max_row + 1):  # Assuming the first row is headers
+#         private_key = sheet['C' + str(row)].value
+#         proxy = sheet['D' + str(row)].value
+#         if private_key and proxy:
+#             private_keys.append((private_key, row))
+#             proxies.append((proxy, row))
+#     return private_keys, proxies
+#
+#
+#
+# async def main():
+#     private_keys, proxies = await read_excel('./accs.xlsx')
+#     print(private_keys)

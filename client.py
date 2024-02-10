@@ -122,7 +122,7 @@ class Client:
         if value:
             tx_params['value'] = value
 
-        print('!!!!!!!  BEFORE   !!!!!!!!' ,tx_params)
+        # print('!!!!!!!  BEFORE   !!!!!!!!' ,tx_params)
 
         try:
             tx_params['gas'] = int(self.w3.eth.estimate_gas(tx_params) * increase_gas)

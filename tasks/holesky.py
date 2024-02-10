@@ -160,20 +160,18 @@ class Holesky:
         decoded_data2 = contract.decode_function_input(payload)
 
 
-        print("!!!!!!!!!!!!!!!!!!!!!!!", decoded_data2)
+        # print("!!!!!!!!!!!!!!!!!!!!!!!", decoded_data2)
 
         # eth_price = self.client.get_eth_price(token='ETH')
         # min_to_amount = TokenAmount(
         #     amount=float(amount.Ether) / eth_price * (1 - slippage / 100),
         # )
-        print("GO", amount.Ether)
+        # print("GO", amount.Ether)
 
         return self.client.send_transaction(
                     to=Holesky.eth_address,
                     data=payload,
-                    value=10000000000000000,
-                    max_priority_fee_per_gas= 4292705005,
-                    max_fee_per_gas= 13500000009
+                    value= TokenAmount(0.0113500000009).Wei,
         )
 
 
