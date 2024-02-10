@@ -130,7 +130,7 @@ class Client:
             print(f'{self.address} | Transaction failed | {err}')
             return None
 
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' ,tx_params)
+        # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' ,tx_params)
 
 
         sign = self.w3.eth.account.sign_transaction(tx_params, self.private_key)

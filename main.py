@@ -7,14 +7,19 @@ from tasks.holesky import Holesky
 from tasks.taiko import Taiko
 from models import TokenAmount
 import openpyxl
+from openpyxl import load_workbook
 
-clientHolesky = Client(private_key=private_key, network=HoleskyNetwork)
-clientHolesky.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
-holesky = Holesky(client=clientHolesky)
 
-clientTaiko = Client(private_key=private_key, network=TaikoNetwork)
-clientTaiko.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
-taiko = Taiko(client=clientTaiko)
+
+
+
+# clientHolesky = Client(private_key=private_key, network=HoleskyNetwork)
+# clientHolesky.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+# holesky = Holesky(client=clientHolesky)
+
+# clientTaiko = Client(private_key=private_key, network=TaikoNetwork)
+# clientTaiko.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+# taiko = Taiko(client=clientTaiko)
 
 # block = client.w3.eth.get_block('latest')
 # print(client.w3.eth.max_priority_fee)
@@ -25,10 +30,54 @@ taiko = Taiko(client=clientTaiko)
 # print(res)
 
 
-holesky.mint()
-approve = holesky.bridge()
-send = holesky.bridge_horse()
-sendEth = holesky.bridge_eth()
+# holesky.mint()
+# approve = holesky.bridge()
+# send = holesky.bridge_horse()
+# sendEth = holesky.bridge_eth()
+
+
+def run_accs(accs_data: list):
+    for acc in accs_data:
+        print('START NEW ACCOUNT =>',acc['privatekey'])
+        clientHolesky = Client(private_key=acc['privatekey'], network=HoleskyNetwork)
+        clientHolesky.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+        holesky = Holesky(client=clientHolesky)
+
+        clientTaiko = Client(private_key=acc['privatekey'], network=TaikoNetwork)
+        clientTaiko.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+        taiko = Taiko(client=clientTaiko)
+
+        print('START MINT =>',acc['privatekey'])
+        holesky.mint()
+
+        print('START APPROVING =>',acc['privatekey'])
+        approve = holesky.bridge()
+
+        print('START BRIDGE HORSE =>',acc['privatekey'])
+        send = holesky.bridge_horse()
+
+        print('START BRIDGE ETH =>',acc['privatekey'])
+        sendEth = holesky.bridge_eth()
+
+        print('FINISH ACCOUNT =>',acc['privatekey'])
+
+
+if __name__ == '__main__':
+
+    workbook = load_workbook(filename='accs.xlsx')
+    sheet = workbook.active
+
+    accs_data = []
+    for row in sheet.iter_rows(min_row=2, min_col=3, max_col=4):
+        privatekey= row[0].value
+        accs_data.append({'privatekey': privatekey})
+
+    # try:
+    run_accs(accs_data=accs_data)
+    # except Exception as err:
+        # print(f'Global error: {err}')
+
+    print(f'All accs done.\n\n')
 
 # print( "holesky aprove =>", aprove)
 
