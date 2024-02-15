@@ -29,7 +29,7 @@ class Holesky:
     def __init__(self, client: Client):
         self.client = client
 
-    async def mint(self, slippage: float = 1, mint_trys: int = 0):
+    def mint(self, slippage: float = 1, mint_trys: int = 0):
         mint_trys += 1
         try:
             contract = self.client.w3.eth.contract(
@@ -37,7 +37,7 @@ class Holesky:
                 address=Holesky.horse_address
             )
 
-            return await self.client.send_transaction(
+            return self.client.send_transaction(
                 to=Holesky.horse_address,
                 data=contract.encodeABI('mint',
                                         args=(
@@ -52,7 +52,7 @@ class Holesky:
                 print(f'{self.address} | unexpected error in mint function: {err}')
                 return False
 
-    async def bridge(self, amount: Optional[TokenAmount] = None, slippage: float = 1, bridge_trys: int = 0):
+    def bridge(self, amount: Optional[TokenAmount] = None, slippage: float = 1, bridge_trys: int = 0):
         bridge_trys += 1
         contract = self.client.w3.eth.contract(
             abi=Holesky.router_abi,
@@ -63,7 +63,7 @@ class Holesky:
             amount = self.client.balance_of(contract_address=Holesky.horse_address)
 
         try:
-            res = await self.client.approve_interface(
+            res = self.client.approve_interface(
                 token_address=Holesky.horse_address,
                 spender=Holesky.spender_horse_address,
                 amount=amount
@@ -74,59 +74,59 @@ class Holesky:
         except Exception as err:
             if bridge_trys < 3:
                 time.sleep(5)
-                return await self.bridge(amount=amount, slippage=slippage, bridge_trys=bridge_trys)
+                return self.bridge(amount=amount, slippage=slippage, bridge_trys=bridge_trys)
             else:
                 print(f'{self.address} | unexpected error in bridge function: {err}')
 
 
-async def bridge_horse(self, amount: Optional[TokenAmount] = None, slippage: float = 1, bridge_horse_trys: int = 0):
-    bridge_horse_trys += 1
-    try:
-        contract = self.client.w3.eth.contract(
-            abi=Holesky.taiko_abi,
-            address=Holesky.horse_address
-        )
-        if not amount:
-            amount = self.client.balance_of(contract_address=Holesky.horse_address)
+    def bridge_horse(self, amount: Optional[TokenAmount] = None, slippage: float = 1, bridge_horse_trys: int = 0):
+        bridge_horse_trys += 1
+        try:
+            contract = self.client.w3.eth.contract(
+                abi=Holesky.taiko_abi,
+                address=Holesky.horse_address
+            )
+            if not amount:
+                amount = self.client.balance_of(contract_address=Holesky.horse_address)
 
-        eth_price = self.client.get_eth_price(token='ETH')
+            eth_price = self.client.get_eth_price(token='ETH')
 
-        print("HORSE BALANCE =>", TokenAmount(amount.Ether / 2).Wei)
+            print("HORSE BALANCE =>", TokenAmount(amount.Ether / 2).Wei)
 
-        abi_data = {
-            'destChainId': 167008,
-            'to':  self.client.address,
-            'token': Holesky.horse_address,
-            'amount': TokenAmount(amount.Ether / 2).Wei,
-            'gasLimit': 140000,
-            'fee': 1650000001100000,
-            'refundTo': self.client.address,
-            'memo': ''
-        }
+            abi_data = {
+                'destChainId': 167008,
+                'to':  self.client.address,
+                'token': Holesky.horse_address,
+                'amount': TokenAmount(amount.Ether / 2).Wei,
+                'gasLimit': 140000,
+                'fee': 1650000001100000,
+                'refundTo': self.client.address,
+                'memo': ''
+            }
 
-        payload = contract.encodeABI('sendToken', {'op': abi_data}, )
+            payload = contract.encodeABI('sendToken', {'op': abi_data}, )
 
-        eth_price = self.client.get_eth_price(token='ETH')
-        min_to_amount = TokenAmount(
-            amount=float(amount.Ether) / eth_price * (1 - slippage / 100),
-        )
+            eth_price = self.client.get_eth_price(token='ETH')
+            min_to_amount = TokenAmount(
+                amount=float(amount.Ether) / eth_price * (1 - slippage / 100),
+            )
 
-        return self.client.send_transaction(
-                    to=Holesky.router_address,
-                    data=payload,
-                    value=min_to_amount.Wei
-        )
-    except Exception as err:
-        if bridge_trys < 3:
-            time.sleep(5)
-            return await self.bridge_horse(amount=amount, slippage=slippage, bridge_trys=bridge_trys)
-        else:
-            print(f'{self.address} | unexpected error in bridge_horse function: {err}')
-            return False
+            return self.client.send_transaction(
+                        to=Holesky.router_address,
+                        data=payload,
+                        value=min_to_amount.Wei
+            )
+        except Exception as err:
+            if bridge_trys < 3:
+                time.sleep(5)
+                return self.bridge_horse(amount=amount, slippage=slippage, bridge_trys=bridge_trys)
+            else:
+                print(f'{self.address} | unexpected error in bridge_horse function: {err}')
+                return False
 
 
 
-    async def bridge_eth(self, amount: Optional[TokenAmount] = None, slippage: float = 1, bridge_eth_trys: int = 0):
+    def bridge_eth(self, amount: Optional[TokenAmount] = None, slippage: float = 1, bridge_eth_trys: int = 0):
         bridge_eth_trys += 1
         try:
             contract = self.client.w3.eth.contract(
@@ -179,7 +179,7 @@ async def bridge_horse(self, amount: Optional[TokenAmount] = None, slippage: flo
             #     amount=float(amount.Ether) / eth_price * (1 - slippage / 100),
             # )
 
-            transaction = await self.client.send_transaction(
+            transaction = self.client.send_transaction(
                         to=Holesky.eth_address,
                         data=payload,
                         value= TokenAmount(0.0113500000009).Wei,
@@ -191,7 +191,7 @@ async def bridge_horse(self, amount: Optional[TokenAmount] = None, slippage: flo
         except Exception as err:
             if bridge_trys < 3:
                 time.sleep(5)
-                return await self.bridge_eth(amount=amount, slippage=slippage, bridge_trys=bridge_trys)
+                return self.bridge_eth(amount=amount, slippage=slippage, bridge_trys=bridge_trys)
             else:
                 print(f'{self.address} | unexpected error in bridge_eth function: {err}')
                 return False

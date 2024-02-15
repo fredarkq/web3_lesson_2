@@ -38,7 +38,7 @@ import time
 # sendEth = holesky.bridge_eth()
 
 
-async def run_accs(accs_data: list):
+def run_accs(accs_data: list):
     for acc in accs_data:
         print('START NEW ACCOUNT =>',acc['privatekey'])
         clientHolesky = Client(private_key=acc['privatekey'], network=HoleskyNetwork)
@@ -50,19 +50,19 @@ async def run_accs(accs_data: list):
         taiko = Taiko(client=clientTaiko)
 
         print('START MINT =>',acc['privatekey'])
-        await holesky.mint()
+        holesky.mint()
         time.sleep(10)
 
         print('START APPROVING =>',acc['privatekey'])
-        approve = await holesky.bridge()
+        approve = holesky.bridge()
         time.sleep(10)
 
         print('START BRIDGE HORSE =>',acc['privatekey'])
-        send = await holesky.bridge_horse()
+        send = holesky.bridge_horse()
         time.sleep(10)
 
         print('START BRIDGE ETH =>',acc['privatekey'])
-        sendEth = await holesky.bridge_eth()
+        sendEth = holesky.bridge_eth()
         time.sleep(10)
 
         print('FINISH ACCOUNT =>',acc['privatekey'])
